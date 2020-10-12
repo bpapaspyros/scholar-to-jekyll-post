@@ -1,6 +1,5 @@
 arrow==0.17.0
 astroid==2.4.2
-autopep8==1.5.4
 beautifulsoup4==4.9.3
 bibtexparser==1.2.0
 certifi==2020.6.20
@@ -15,7 +14,6 @@ isort==5.6.3
 lazy-object-proxy==1.4.3
 lxml==4.5.2
 mccabe==0.6.1
-pycodestyle==2.6.0
 pycparser==2.20
 pylint==2.6.0
 pyOpenSSL==19.1.0
