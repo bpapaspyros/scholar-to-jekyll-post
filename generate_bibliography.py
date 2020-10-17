@@ -19,8 +19,9 @@ if __name__ == '__main__':
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
-    if not os.path.exists(config['output-dir']):
-        os.makedirs(config['output-dir'])
+    if not args.load:
+        if not os.path.exists(config['output-dir']):
+            os.makedirs(config['output-dir'])
 
     if not args.load:
         sc = GScholarScrapper(config)
@@ -41,4 +42,3 @@ if __name__ == '__main__':
 
     jk = Jekyllify(pubs, config)
     jk.generate()
-    jk.write()

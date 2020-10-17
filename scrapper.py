@@ -75,4 +75,4 @@ class GScholarScrapper:
         return self._formated_data
 
     def get_raw_data(self):
-        return copy.deepcopy(self._data)
+        return deepcopy(self._data)
