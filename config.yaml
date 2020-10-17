@@ -1,3 +1,11 @@
 scholar-id: 4CCqmEUAAAAJ
+author-name: Vaios Papaspyros
+
 timeout: 20
+max-retries: 5
 use-proxy: true
+use-tor: false
+store-raw: false
+
+jekyll-layout: post
+output-dir: out

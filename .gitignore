@@ -13,6 +13,7 @@ venv/
 *.png
 *.model
 *.log
+out
 
 !data/germaine/Toulouse\ Data/**/**/*
 

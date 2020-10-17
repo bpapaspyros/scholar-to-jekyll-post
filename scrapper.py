@@ -1,17 +1,26 @@
 import time
 from tqdm import tqdm
+from copy import deepcopy
 from scholarly import scholarly, ProxyGenerator
-
-from pprint import pprint
 
 
 class GScholarScrapper:
     def __init__(self, config):
         self._scholar_id = config['scholar-id']
         self._timeout = config['timeout']
-        if config['use-proxy']:
-            pg = ProxyGenerator()
-            scholarly.use_proxy(pg.FreeProxies())
+        self._max_retries = config['max-retries']
+        self._config = config
+        self._reset_scholarly_proxy()
+
+    def _reset_scholarly_proxy(self):
+        if self._config['use-proxy']:
+            if not self._config['use-tor']:
+                pg = ProxyGenerator()
+                pg.FreeProxies()
+            else:
+                pg = ProxyGenerator()
+                pg.Tor_Internal(tor_cmd="tor")
+            scholarly.use_proxy(pg)
 
     def fetch(self):
         self._data = scholarly.search_author_id(self._scholar_id).fill()
@@ -35,28 +44,35 @@ class GScholarScrapper:
             else:
                 self._formated_data[-1]['medium'] = p.bib['N/A']
 
+            time.sleep(self._timeout)
+
+            query = scholarly.search_pubs(p.bib['title'])
+            bibs = next(query)
+
             attempts = 0
             while True:
                 try:
-                    query = scholarly.search_pubs(p.bib['title'])
-                    bibs = next(query).fill()
+                    bibs.fill()
                     if not isinstance(bibs, list):
                         bibs = [bibs]
                     for b in bibs:
                         if 'venue' in b.bib.keys():
-                            self._formated_data[-1]['medium'] = b.bib['venue']
                             self._formated_data[-1]['type'] = b.bib['ENTRYTYPE']
+                        self._formated_data[-1]['bibtex'] = b.bibtex
                     break
                 except:
                     print('Attempt ' + str(attempts) + ' -- Failed to get bibtex -- retrying in ' +
                           str(self._timeout) + ' secs')
                     attempts += 1
+                    self._reset_scholarly_proxy()
                     time.sleep(self._timeout)
 
+                if attempts > self._max_retries - 1:
+                    break
             time.sleep(self._timeout)
 
     def get_formated_data(self):
         return self._formated_data
 
     def get_raw_data(self):
-        return self._data
+        return copy.deepcopy(self._data)
