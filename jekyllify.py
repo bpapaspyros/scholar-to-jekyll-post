@@ -14,7 +14,7 @@ class Jekyllify:
 
     def generate(self):
         today = date.today()
-        date_today = today.strftime("%d-%m-%Y-")
+        date_today = today.strftime("%Y-%m-%d-")
         # time = now.strftime("%H:%M")
 
         for p in self._publications:
